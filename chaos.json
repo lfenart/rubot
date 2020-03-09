@@ -1,0 +1,18 @@
+{
+	"all_spin": true,
+	"b2b_bonus": 1,
+	"b2b_quadruple": false,
+	"combo_table": [
+		0,
+		0,
+		1,
+		2,
+		2,
+		3,
+		3,
+		3,
+		4
+	],
+	"search_breadth": 128,
+	"search_depth": 5
+}
