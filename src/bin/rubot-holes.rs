@@ -40,6 +40,8 @@ fn main() {
         };
         Box::leak(Box::new(config))
     };
+    // load the list of actions in memory
+    let _ = rubot::robot::Action::get_list(Block::I, Block::I);
     let mut robot: Option<RobotHoles> = None;
     loop {
         let mut buffer = String::new();
