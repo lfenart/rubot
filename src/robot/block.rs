@@ -27,32 +27,7 @@ pub enum Block {
 }
 
 impl Block {
-    pub fn from_byte(n: u8) -> Option<Self> {
-        match n {
-            b'I' => Some(Block::I),
-            b'J' => Some(Block::J),
-            b'L' => Some(Block::L),
-            b'O' => Some(Block::O),
-            b'S' => Some(Block::S),
-            b'T' => Some(Block::T),
-            b'Z' => Some(Block::Z),
-            _ => None,
-        }
-    }
-
-    pub fn get_byte(self) -> u8 {
-        match self {
-            Block::I => 0,
-            Block::J => 1,
-            Block::L => 2,
-            Block::O => 3,
-            Block::S => 4,
-            Block::T => 5,
-            Block::Z => 6,
-        }
-    }
-
-    pub fn value(self, rotation: u8) -> u16 {
+    pub fn value(self, rotation: i8) -> u16 {
         match self {
             Block::I => match rotation & 0x3 {
                 0 => 0x00f0,
@@ -100,7 +75,26 @@ impl Block {
         }
     }
 
-    pub fn get_kick(rotation: u8, spin: u8) -> &'static [(isize, isize)] {
-        &KICK[(spin / 2) as usize][rotation as usize]
+    pub fn get_kick(rotation: i8, spin: i8) -> &'static [(isize, isize)] {
+        &KICK[(spin >> 1) as usize][rotation as usize]
+    }
+}
+
+use std::convert::TryFrom;
+
+impl TryFrom<char> for Block {
+    type Error = char;
+
+    fn try_from(n: char) -> Result<Block, Self::Error> {
+        match n {
+            'I' => Ok(Block::I),
+            'J' => Ok(Block::J),
+            'L' => Ok(Block::L),
+            'O' => Ok(Block::O),
+            'S' => Ok(Block::S),
+            'T' => Ok(Block::T),
+            'Z' => Ok(Block::Z),
+            _ => Err(n),
+        }
     }
 }

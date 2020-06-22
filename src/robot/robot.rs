@@ -44,7 +44,7 @@ where
         let (lines, spin) = self.grid.drop_block(
             self.block,
             action.rotation,
-            action.translation as usize,
+            (action.translation + 3) as usize,
             action.spin,
         );
         if lines > 0 {
@@ -85,7 +85,7 @@ where
         self.block = self.queue.pop_front().unwrap();
     }
 
-    pub fn next_action(&mut self) -> Action {
+    pub fn next_action(&self) -> Action {
         let depth = self.config.search_depth;
         let breadth = self.config.search_breadth as usize;
         let action_list = self.get_action_list();

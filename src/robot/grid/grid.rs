@@ -7,7 +7,7 @@ pub trait Grid: Clone + std::fmt::Debug {
 
     fn calc_score(&self) -> i32;
 
-    fn drop_block(&mut self, block: Block, rotation: u8, x: usize, spin: u8) -> (i32, bool);
+    fn drop_block(&mut self, block: Block, rotation: i8, x: usize, spin: i8) -> (i32, bool);
 
     fn is_empty(&self) -> bool;
 

@@ -40,12 +40,12 @@ impl Grid for GridHoles {
 
     fn add_handicap(&mut self, lines: &[u8]) {
         for line in lines {
-            self.lines[MAIN_SIZE + self.handicap] = FULL_LINE ^ (1u16 << line);
+            self.lines[MAIN_SIZE + self.handicap] = FULL_LINE ^ (1u16 << (line + 3));
             self.handicap += 1;
         }
     }
 
-    fn drop_block(&mut self, block: Block, rotation: u8, x: usize, spin: u8) -> (i32, bool) {
+    fn drop_block(&mut self, block: Block, rotation: i8, x: usize, spin: i8) -> (i32, bool) {
         let y = {
             let value = block.value(rotation);
             let mut square = self.square(x, 0);
@@ -98,7 +98,7 @@ impl GridHoles {
         i
     }
 
-    fn do_spin(&mut self, block: Block, rotation: u8, x: usize, y: usize, spin: u8) -> (i32, bool) {
+    fn do_spin(&mut self, block: Block, rotation: i8, x: usize, y: usize, spin: i8) -> (i32, bool) {
         match self.do_kick(block, rotation, x, y, spin) {
             Some((new_x, new_y)) => self.drop_block_spin(block, rotation + spin, new_x, new_y),
             None => (self.put_block(block, rotation, x, y), false),
@@ -108,10 +108,10 @@ impl GridHoles {
     fn do_kick(
         &mut self,
         block: Block,
-        rotation: u8,
+        rotation: i8,
         x: usize,
         y: usize,
-        spin: u8,
+        spin: i8,
     ) -> Option<(usize, usize)> {
         let kick_list = Block::get_kick(rotation, spin);
         for i in 0..5 {
@@ -124,7 +124,7 @@ impl GridHoles {
         None
     }
 
-    fn drop_block_spin(&mut self, block: Block, rotation: u8, x: usize, y: usize) -> (i32, bool) {
+    fn drop_block_spin(&mut self, block: Block, rotation: i8, x: usize, y: usize) -> (i32, bool) {
         let new_y = {
             let mut new_y = y;
             let value = block.value(rotation);
@@ -143,11 +143,11 @@ impl GridHoles {
         (lines, is_spin)
     }
 
-    fn fit_block(&self, block: Block, rotation: u8, x: usize, y: usize) -> bool {
+    fn fit_block(&self, block: Block, rotation: i8, x: usize, y: usize) -> bool {
         (self.square(x, y) & block.value(rotation)) == 0
     }
 
-    fn put_block(&mut self, block: Block, rotation: u8, x: usize, y: usize) -> i32 {
+    fn put_block(&mut self, block: Block, rotation: i8, x: usize, y: usize) -> i32 {
         let (n, mut lines, handicap_lines) = {
             let mut n = 0i32;
             let mut value = block.value(rotation);

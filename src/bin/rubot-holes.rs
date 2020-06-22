@@ -1,7 +1,10 @@
 use rubot::config::Config;
+use rubot::robot::Action;
 use rubot::robot::Block;
 use rubot::robot::RobotHoles;
+use rubot::util;
 
+use std::convert::TryFrom;
 use std::fs;
 use std::io::Read;
 
@@ -41,7 +44,7 @@ fn main() {
         Box::leak(Box::new(config))
     };
     // load the list of actions in memory
-    let _ = rubot::robot::Action::get_list(Block::I, Block::I);
+    let _ = Action::get_list(Block::I, Block::I);
     let mut robot: Option<RobotHoles> = None;
     loop {
         let mut buffer = String::new();
@@ -49,73 +52,72 @@ fn main() {
         let mut iter = buffer.split_whitespace();
         match iter.next() {
             None => {} // ignore empty line
-            Some("go") => {
-                play(robot.as_mut().expect("Not ready, use newgame first"));
-                robot = None;
-                println!("game ended");
+            Some("block") => {
+                let r = robot.as_mut().unwrap();
+                while let Some(x) = iter.next() {
+                    let block = Block::try_from(x.parse::<char>().unwrap()).unwrap();
+                    r.add_block(block);
+                }
             }
-            Some("isready") => match robot {
-                None => println!("nok"),
-                Some(_) => println!("readyok"),
+            Some("go") => match robot.as_ref() {
+                None => println!("Create a new game first"),
+                Some(r) => {
+                    let action = r.next_action();
+                    println!(
+                        "{} {} {} {}",
+                        if action.hold { 1 } else { 0 },
+                        action.rotation,
+                        action.translation,
+                        action.spin
+                    );
+                }
             },
+            Some("handicap") => {
+                robot.as_mut().unwrap().add_handicap(
+                    &iter
+                        .map(|x| {
+                            let column = x.parse::<u8>().unwrap();
+                            if column >= 10 {
+                                panic!("Column index should be < 10");
+                            }
+                            column
+                        })
+                        .collect::<Vec<u8>>(),
+                );
+            }
+            Some("isready") => println!("readyok"),
             Some("newgame") => {
                 let blocks: Vec<Block> = iter
                     .next()
                     .expect("Expected block list")
                     .as_bytes()
                     .iter()
-                    .map(|&x| Block::from_byte(x).expect("Invalid block name"))
+                    .map(|&x| Block::try_from(x as char).expect("Invalid block name"))
                     .collect();
                 robot = Some(RobotHoles::new(&blocks, config));
             }
+            Some("play") => match robot.as_mut() {
+                None => println!("Create a new game first"),
+                Some(r) => {
+                    let hold = util::read_i8(&mut iter) != 0;
+                    let rotation = util::read_i8(&mut iter);
+                    let translation = util::read_i8(&mut iter);
+                    let spin = util::try_read_i8(&mut iter).unwrap_or(0);
+                    r.play(Action {
+                        hold,
+                        rotation,
+                        translation,
+                        spin,
+                    });
+                }
+            },
             Some("print") => println!("{:x?}", robot),
-            Some("exit") | Some("quit") => break,
+            Some("exit") => break,
             Some(_) => println!("invalid command"),
         }
     }
 
     unsafe {
         Box::from_raw(config as *const Config as *mut Config);
-    }
-}
-
-fn play(robot: &mut RobotHoles) {
-    let mut buffer = String::new();
-    loop {
-        let action = robot.next_action();
-        println!(
-            "{} {} {} {}",
-            if action.hold { 1 } else { 0 },
-            action.rotation,
-            action.translation,
-            action.spin
-        );
-        robot.play(action);
-        buffer.clear();
-        std::io::stdin().read_line(&mut buffer).unwrap();
-        let mut iter = buffer.split_whitespace();
-        match iter.next().expect("No empty line allowed") {
-            "0" => {}
-            "1" => robot.ko(),
-            "q" => break,
-            _ => panic!("Should be 0, 1 or q"),
-        }
-        for &block in iter.next().expect("Expected block list").as_bytes() {
-            robot.add_block(Block::from_byte(block).expect("Invalid block name"));
-        }
-        robot.add_handicap(
-            &iter
-                .map(|x| {
-                    let column = x
-                        .parse()
-                        .expect("Column index should be an integer in [3, 12]");
-                    if column < 3 || column > 12 {
-                        panic!("Column index should be an integer in [3, 12]")
-                    } else {
-                        column
-                    }
-                })
-                .collect::<Vec<u8>>(),
-        );
     }
 }
