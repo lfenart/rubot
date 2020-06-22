@@ -23,11 +23,15 @@ fn main() {
                 .value_name("FILE")
                 .help("Sets a custom config file")
                 .takes_value(true)
-                .required(true),
+                .required(false),
         )
         .get_matches();
-    let config_path = matches.value_of("config").unwrap();
-    let config: &'static Config = {
+    let config: &'static Config = (|| {
+        let config_path = match matches.value_of("config") {
+            None | Some("wwc_holes") => return Box::leak(Box::new(Config::wwc_holes())),
+            Some("wwc_chaos") => return Box::leak(Box::new(Config::wwc_chaos())),
+            Some(x) => x,
+        };
         let mut file = match fs::File::open(config_path) {
             Ok(file) => file,
             Err(err) => panic!("Could not open {}: {:?}", config_path, err),
@@ -42,7 +46,7 @@ fn main() {
             Err(err) => panic!("Error while unmarshalling {}: {:?}", config_path, err),
         };
         Box::leak(Box::new(config))
-    };
+    })();
     // load the list of actions in memory
     let _ = Action::get_list(Block::I, Block::I);
     let mut robot: Option<RobotHoles> = None;
