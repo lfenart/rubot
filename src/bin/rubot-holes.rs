@@ -90,6 +90,7 @@ fn main() {
                 );
             }
             Some("isready") => println!("readyok"),
+            Some("ko") => robot.as_mut().unwrap().ko(),
             Some("newgame") => {
                 let blocks: Vec<Block> = iter
                     .next()
