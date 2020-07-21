@@ -31,14 +31,14 @@ impl Action {
 
 lazy_static! {
     static ref ACTION_LIST: Vec<Vec<Vec<Action>>> = {
-        fn rotations(block: &Block) -> Vec<i8> {
+        fn rotations(block: Block) -> Vec<i8> {
             match block {
                 Block::I | Block::S | Block::Z => vec![0, 1],
                 Block::J | Block::L | Block::T => vec![0, 1, 2, 3],
                 Block::O => vec![0],
             }
         }
-        fn translations(block: &Block, rotation: i8) -> std::ops::Range<i8> {
+        fn translations(block: Block, rotation: i8) -> std::ops::Range<i8> {
             match block {
                 Block::I => match rotation {
                     0 | 2 => 0..7,
@@ -54,7 +54,7 @@ lazy_static! {
                 },
             }
         }
-        fn spins(block: &Block, rotation: i8) -> Vec<i8> {
+        fn spins(block: Block, rotation: i8) -> Vec<i8> {
             match block {
                 Block::I | Block::O => vec![0],
                 Block::J => match rotation & 0x1 {
@@ -80,12 +80,11 @@ lazy_static! {
             }
         }
         let mut list: Vec<Vec<Vec<Action>>> = Vec::new();
-        let block_list: Vec<Block> = "IJLOSTZ"
-            .as_bytes()
+        let block_list: Vec<Block> = b"IJLOSTZ"
             .iter()
             .map(|&x| Block::try_from(x as char).unwrap())
             .collect();
-        for block1 in block_list.iter() {
+        for &block1 in block_list.iter() {
             list.push(Vec::new());
             let mut list1 = Vec::new();
             for r in rotations(block1) {
@@ -100,7 +99,7 @@ lazy_static! {
                     }
                 }
             }
-            for block2 in block_list.iter() {
+            for &block2 in block_list.iter() {
                 let mut list2 = list1.clone();
                 if block1 != block2 {
                     for r in rotations(block2) {

@@ -113,10 +113,9 @@ impl GridBombs {
         y: usize,
         spin: i8,
     ) -> Option<(usize, usize)> {
-        let kick_list = Block::get_kick(rotation, spin);
-        for i in 0..5 {
-            let new_x = (x as isize + kick_list[i].0) as usize;
-            let new_y = (y as isize - kick_list[i].1) as usize;
+        for kick in Block::get_kick(rotation, spin).iter() {
+            let new_x = (x as isize + kick.0) as usize;
+            let new_y = (y as isize - kick.1) as usize;
             if self.fit_block(block, rotation + spin, new_x, new_y) {
                 return Some((new_x, new_y));
             }
@@ -172,7 +171,7 @@ impl GridBombs {
                 handicap_cleared && (!self.lines[MAIN_SIZE] & !self.lines[MAIN_SIZE - 1]) == 0,
             )
         };
-        if lines.len() != 0 {
+        if !lines.is_empty() {
             let mut delta = 0usize;
             let start = lines.pop().unwrap();
             let mut limit = lines.pop().unwrap_or(0);
