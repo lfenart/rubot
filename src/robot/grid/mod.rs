@@ -6,8 +6,15 @@ pub use grid_holes::GridHoles;
 
 use super::Block;
 
+pub const MAIN_SIZE: usize = 32;
+pub const FULL_SIZE: usize = 64;
+pub const EMPTY_LINE: u16 = 0xe007;
+pub const FULL_LINE: u16 = 0xffff;
+
 pub trait Grid: Clone + std::fmt::Debug {
-    fn new() -> Self;
+    fn new(lines: [u16; FULL_SIZE], handicap: usize) -> Self;
+
+    fn empty() -> Self;
 
     fn add_handicap(&mut self, lines: &[u8]);
 

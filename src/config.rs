@@ -16,9 +16,9 @@ impl Config {
             all_spin: false,
             b2b_bonus: 1,
             b2b_quadruple: true,
-            combo_table: vec![0, 1, 2, 2, 3, 3, 3, 4],
-            search_breadth: 128,
-            search_depth: 5,
+            combo_table: vec![0, 0, 1, 2],
+            search_breadth: 1024,
+            search_depth: 4,
         }
     }
 
@@ -27,9 +27,9 @@ impl Config {
             all_spin: true,
             b2b_bonus: 1,
             b2b_quadruple: false,
-            combo_table: vec![0, 1, 2, 2, 3, 3, 3, 4],
-            search_breadth: 128,
-            search_depth: 5,
+            combo_table: vec![0, 0, 1],
+            search_breadth: 1024,
+            search_depth: 4,
         }
     }
 
@@ -38,9 +38,9 @@ impl Config {
             all_spin: false,
             b2b_bonus: 1,
             b2b_quadruple: true,
-            combo_table: vec![0, 1, 2, 2, 3, 3, 3, 4],
-            search_breadth: 128,
-            search_depth: 5,
+            combo_table: vec![0, 0, 1, 2],
+            search_breadth: 1024,
+            search_depth: 4,
         }
     }
 }

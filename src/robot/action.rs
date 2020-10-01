@@ -45,7 +45,7 @@ lazy_static! {
                     1 | 3 => -2..8,
                     _ => unreachable!(),
                 },
-                Block::O => 2..11,
+                Block::O => -1..8,
                 Block::J | Block::L | Block::S | Block::T | Block::Z => match rotation {
                     0 | 2 => 0..8,
                     1 => -1..8,

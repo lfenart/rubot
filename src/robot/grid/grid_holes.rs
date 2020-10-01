@@ -1,12 +1,7 @@
 use std::fmt;
 
-use super::Grid;
+use super::{Grid, EMPTY_LINE, FULL_LINE, FULL_SIZE, MAIN_SIZE};
 use crate::robot::Block;
-
-const MAIN_SIZE: usize = 32;
-const FULL_SIZE: usize = 64;
-const EMPTY_LINE: u16 = 0xe007;
-const FULL_LINE: u16 = 0xffff;
 
 #[derive(Clone)]
 pub struct GridHoles {
@@ -15,7 +10,11 @@ pub struct GridHoles {
 }
 
 impl Grid for GridHoles {
-    fn new() -> Self {
+    fn new(lines: [u16; FULL_SIZE], handicap: usize) -> Self {
+        Self { lines, handicap }
+    }
+
+    fn empty() -> Self {
         Self {
             lines: [EMPTY_LINE; FULL_SIZE],
             handicap: 0,

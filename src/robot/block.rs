@@ -98,3 +98,17 @@ impl TryFrom<char> for Block {
         }
     }
 }
+
+impl Into<char> for Block {
+    fn into(self) -> char {
+        match self {
+            Block::I => 'I',
+            Block::J => 'J',
+            Block::L => 'L',
+            Block::O => 'O',
+            Block::S => 'S',
+            Block::T => 'T',
+            Block::Z => 'Z',
+        }
+    }
+}

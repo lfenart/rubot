@@ -103,12 +103,12 @@ fn main() {
             Some("play") => match robot.as_mut() {
                 None => println!("Create a new game first"),
                 Some(r) => {
-                    let hold = util::read_i8(&mut iter) != 0;
-                    let rotation = util::read_i8(&mut iter);
-                    let translation = util::read_i8(&mut iter);
-                    let spin = util::try_read_i8(&mut iter).unwrap_or(0);
+                    let hold: i8 = util::read(&mut iter);
+                    let rotation = util::read(&mut iter);
+                    let translation = util::read(&mut iter);
+                    let spin = util::try_read(&mut iter).unwrap_or(0);
                     r.play(Action {
-                        hold,
+                        hold: hold != 0,
                         rotation,
                         translation,
                         spin,

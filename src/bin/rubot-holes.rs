@@ -1,4 +1,5 @@
 use rubot::config::Config;
+use rubot::robot::grid::{Grid, EMPTY_LINE, FULL_SIZE, MAIN_SIZE};
 use rubot::robot::Action;
 use rubot::robot::Block;
 use rubot::robot::RobotHoles;
@@ -67,8 +68,10 @@ fn main() {
                 None => println!("Create a new game first"),
                 Some(r) => {
                     let action = r.next_action();
+                    let next_block: char = r.next_block(action.hold).into();
                     println!(
-                        "{} {} {} {}",
+                        "{} {} {} {} {}",
+                        next_block,
                         if action.hold { 1 } else { 0 },
                         action.rotation,
                         action.translation,
@@ -101,15 +104,29 @@ fn main() {
                     .collect();
                 robot = Some(RobotHoles::new(&blocks, config));
             }
+            Some("grid") => match robot.as_mut() {
+                None => println!("Create a new game first"),
+                Some(r) => {
+                    let handicap: usize = util::read(&mut iter);
+                    let mut lines = [EMPTY_LINE; FULL_SIZE];
+                    for i in 0..20 {
+                        let index = i + MAIN_SIZE - 20 + handicap;
+                        lines[index] = util::read(&mut iter);
+                        lines[index] <<= 3;
+                        lines[index] += EMPTY_LINE;
+                    }
+                    r.set_grid(Grid::new(lines, handicap));
+                }
+            },
             Some("play") => match robot.as_mut() {
                 None => println!("Create a new game first"),
                 Some(r) => {
-                    let hold = util::read_i8(&mut iter) != 0;
-                    let rotation = util::read_i8(&mut iter);
-                    let translation = util::read_i8(&mut iter);
-                    let spin = util::try_read_i8(&mut iter).unwrap_or(0);
+                    let hold: i8 = util::read(&mut iter);
+                    let rotation = util::read(&mut iter);
+                    let translation = util::read(&mut iter);
+                    let spin = util::try_read(&mut iter).unwrap_or(0);
                     r.play(Action {
-                        hold,
+                        hold: hold != 0,
                         rotation,
                         translation,
                         spin,

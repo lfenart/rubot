@@ -1,6 +1,6 @@
 mod action;
 mod block;
-mod grid;
+pub mod grid;
 
 pub use self::action::Action;
 pub use self::block::Block;
@@ -32,7 +32,7 @@ impl<T: Grid> Robot<T> {
             block: blocks[0],
             combo: 0,
             config,
-            grid: T::new(),
+            grid: T::empty(),
             hold: None,
             queue: VecDeque::from(blocks[1..].to_vec()),
             sent: 0,
@@ -135,8 +135,12 @@ impl<T: Grid> Robot<T> {
         self.grid.ko();
     }
 
+    pub fn set_grid(&mut self, grid: T) {
+        self.grid = grid;
+    }
+
     fn calc_score(&self) -> i32 {
-        16 * self.sent + self.grid.calc_score()
+        16 * self.sent + 4 * self.b2b as i32 * self.config.b2b_bonus + self.grid.calc_score()
     }
 
     fn do_hold(&mut self) {
@@ -165,6 +169,18 @@ impl<T: Grid> Robot<T> {
             config.combo_table[config.combo_table.len() - 1]
         } else {
             config.combo_table[combo]
+        }
+    }
+
+    pub fn next_block(&self, hold: bool) -> Block {
+        if hold {
+            if let Some(block) = self.hold {
+                block
+            } else {
+                self.queue[0]
+            }
+        } else {
+            self.block
         }
     }
 }
