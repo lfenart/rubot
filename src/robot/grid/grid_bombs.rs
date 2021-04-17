@@ -1,5 +1,7 @@
 use std::fmt;
 
+use serde::ser::{Serialize, SerializeStruct, Serializer};
+
 use super::{Grid, EMPTY_LINE, FULL_LINE, FULL_SIZE, MAIN_SIZE};
 use crate::robot::Block;
 
@@ -7,6 +9,18 @@ use crate::robot::Block;
 pub struct GridBombs {
     lines: [u16; FULL_SIZE],
     handicap: usize,
+}
+
+impl Serialize for GridBombs {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("GridBombs", 2)?;
+        state.serialize_field("lines", &self.lines.to_vec())?;
+        state.serialize_field("handicap", &self.handicap)?;
+        state.end()
+    }
 }
 
 impl Grid for GridBombs {

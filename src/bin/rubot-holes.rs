@@ -68,10 +68,8 @@ fn main() {
                 None => println!("Create a new game first"),
                 Some(r) => {
                     let action = r.next_action();
-                    let next_block: char = r.next_block(action.hold).into();
                     println!(
-                        "{} {} {} {} {}",
-                        next_block,
+                        "{} {} {} {}",
                         if action.hold { 1 } else { 0 },
                         action.rotation,
                         action.translation,
@@ -133,7 +131,7 @@ fn main() {
                     });
                 }
             },
-            Some("print") => println!("{:x?}", robot),
+            Some("print") => println!("{:x?}", serde_json::to_string(&robot).unwrap()),
             Some("exit") => break,
             Some(_) => println!("invalid command"),
         }

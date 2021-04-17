@@ -115,7 +115,7 @@ fn main() {
                     });
                 }
             },
-            Some("print") => println!("{:x?}", robot),
+            Some("print") => println!("{:x?}", serde_json::to_string(&robot)),
             Some("exit") => break,
             Some(_) => println!("invalid command"),
         }

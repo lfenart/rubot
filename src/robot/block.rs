@@ -1,3 +1,5 @@
+use serde::Serialize;
+
 const KICK: [[[(isize, isize); 5]; 4]; 2] = [
     [
         // spin = 1
@@ -15,7 +17,8 @@ const KICK: [[[(isize, isize); 5]; 4]; 2] = [
     ],
 ];
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
+#[repr(u8)]
 pub enum Block {
     I,
     J,
@@ -99,9 +102,9 @@ impl TryFrom<char> for Block {
     }
 }
 
-impl Into<char> for Block {
-    fn into(self) -> char {
-        match self {
+impl From<Block> for char {
+    fn from(block: Block) -> char {
+        match block {
             Block::I => 'I',
             Block::J => 'J',
             Block::L => 'L',

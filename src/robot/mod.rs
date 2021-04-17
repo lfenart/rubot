@@ -2,6 +2,8 @@ mod action;
 mod block;
 pub mod grid;
 
+use serde::Serialize;
+
 pub use self::action::Action;
 pub use self::block::Block;
 
@@ -13,7 +15,7 @@ use std::collections::VecDeque;
 pub type RobotBombs = Robot<GridBombs>;
 pub type RobotHoles = Robot<GridHoles>;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub struct Robot<T> {
     b2b: bool,
     block: Block,

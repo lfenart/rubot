@@ -11,21 +11,9 @@ pub struct Action {
     pub spin: i8,
 }
 
-fn get_index(block: Block) -> usize {
-    match block {
-        Block::I => 0,
-        Block::J => 1,
-        Block::L => 2,
-        Block::O => 3,
-        Block::S => 4,
-        Block::T => 5,
-        Block::Z => 6,
-    }
-}
-
 impl Action {
     pub fn get_list(block1: Block, block2: Block) -> &'static [Action] {
-        &ACTION_LIST[get_index(block1)][get_index(block2)]
+        &ACTION_LIST[block1 as usize][block2 as usize]
     }
 }
 
