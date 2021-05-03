@@ -66,8 +66,10 @@ fn main() {
                 None => println!("Create a new game first"),
                 Some(r) => {
                     let action = r.next_action();
+                    let next_block: char = r.next_block(action.hold).into();
                     println!(
-                        "{} {} {} {}",
+                        "{} {} {} {} {}",
+                        next_block,
                         if action.hold { 1 } else { 0 },
                         action.rotation,
                         action.translation,
